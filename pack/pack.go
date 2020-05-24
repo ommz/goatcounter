@@ -16246,6 +16246,18 @@ closing <code>&lt;/body&gt;</code> tag (but anywhere, such as in the
 				<label for="limits_ref">Referrers page size</label>
 				<input type="number" min="1" max="25" name="settings.limits.ref" id="limits_ref" value="{{.Site.Settings.Limits.Ref}}">
 				{{validate "site.settings.limits.ref" .Validate}}
+
+				<label for="email_reports">Email reports</label>
+				<select name="settings.email_reports" id="email_reports">
+					<option {{option_value .Site.Settings.EmailReports.String "0"}}>Never</option>
+					<option {{option_value .Site.Settings.EmailReports.String "1"}}>Daily</option>
+					<option {{option_value .Site.Settings.EmailReports.String "2"}}>Weekly</option>
+					<option {{option_value .Site.Settings.EmailReports.String "3"}}>Biweekly</option>
+					<option {{option_value .Site.Settings.EmailReports.String "4"}}>Monthly</option>
+				</select>
+
+				<label for="email_reports_cc">Also Cc to</label>
+				<input type="text" name="settings.email_reports_cc" id="email_reports_cc" value="{{.Site.Settings.EmailReportsCc}}">
 			</fieldset>
 
 			<fieldset>
@@ -16697,6 +16709,40 @@ Someone (hopefully you) requested to reset the password on your GoatCounter acco
 You can do this here:
 {{.Site.URL}}/user/reset/{{.User.LoginRequest}}
 
+{{template "_email_bottom.gotxt" .}}
+`),
+	"tpl/email_report.gohtml": []byte(`HTML Version
+`),
+	"tpl/email_report.gotxt": []byte(`Hi there!
+
+This is your {{.PeriodName}} GoatCounter report for {{.Site.Code}}
+
+Note: this is the text version of the email and best viewed with a monospaced
+typeface.
+
+    Path      Visitors       Pageviews    Difference
+
+    Totals      13,645          14,143    +5%
+{{range $p := .Pages}}
+{{$p.Path}}    {{$p.CountUnique}}     {{$p.PageViews}}
+{{end}}
+{{/*
+Top referrers this week:
+
+    reddit.com    1,531
+    Hacker News   1,531
+
+
+See https://foo.goatcounter.com for the full details.
+
+if .Once
+This email is sent once for new installations; if you wish to keep receiving it
+then please enable the setting.
+else
+This is email is sent because you set it. Please change the setting if you no
+longer want to.
+end
+*/}}
 {{template "_email_bottom.gotxt" .}}
 `),
 	"tpl/email_verify.gotxt": []byte(`Hi there,
